@@ -1,4 +1,5 @@
 import mongoose, {Document, ObjectId, Schema} from 'mongoose';
+import { IParkingBooking } from '../ParkingBooking/booking.model';
 // import uniqueValidator from 'mongoose-unique-validator';
 // import { SoftDeleteModel, softDeletePlugin } from 'soft-delete-plugin-mongoose';
 
@@ -10,15 +11,21 @@ export interface IUser extends Document {
     contact: string;
     password?: string;
     role: string;
+    parkingArea: string[];
 }
 
 const UserSchema: Schema = new Schema({
-    date: {type: Date, default: ''},
-    name: {type: String, required: true, default: Date.now()},
+    date: {type: Date, default: Date.now()},
+    name: {type: String, required: true, default: ''},
     email: {type: String, required: true, default: '', unique: true},
     contact: {type: String, required: true, default: ''},
     password: {type: String, required: true, default: ''},
     role: {type: String, required: true, default: 'user'},
+    parkingArea: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'parkingArea', 
+      
+    }],
 })
 
 UserSchema.pre<IUser>('save', function (next) {

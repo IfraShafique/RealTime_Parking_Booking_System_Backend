@@ -1,6 +1,7 @@
 {
   "name": "realtime_parking_booking_system",
   "version": "1.0.0",
+  "proxy": "http://localhost:5000",
   "description": "The proposed project is a smart real-time parking booking system that provides customers an easy way of reserving a parking space online. It overcomes the problem of finding a parking space in commercial areas that unnecessary consumes time. ",
   "main": "index.js",
   "scripts": {

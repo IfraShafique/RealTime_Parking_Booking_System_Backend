@@ -5,7 +5,9 @@ import * as dotenv from 'dotenv';
 import {dbConnect} from './db/db.config';
 import userRoutes from '../Modules/Users/user.routes';
 import loginRoutes from '../Modules/Authentication/auth.routes';
+import parkingAreaRoutes from '../Modules/ParkingBooking/booking.routes';
 import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
 
 dotenv.config();
 const app = express();
@@ -23,11 +25,16 @@ app.use(helmet());
 app.use(cors(corsOptions));
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false}));
-app.use(cookieParser());
+app.use(express.urlencoded({ extended: true}));
+// app.use(cookieParser());
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
 
 // Define Routes
-app.use(userRoutes)
+app.use(userRoutes)   
 app.use(loginRoutes);
+app.use(parkingAreaRoutes);
+
 export default app;

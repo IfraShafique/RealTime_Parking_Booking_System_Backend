@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { userRegstrationService, isEmailExistService } from './user.services';
+import { userRegistrationService, isEmailExistService } from './user.services';
 
 
 export const userRegistrationController = async (
@@ -13,8 +13,10 @@ export const userRegistrationController = async (
       if (!isUserExist) {
           const user = {
           ...req.body,
+          parkingArea: req.body.parkingArea,
         };
-        await userRegstrationService(user, res);
+        await userRegistrationService(user, res);
+        
       } else {
         const error = new Error('User Already Exist');
         (error as any).statusCode = 403;
