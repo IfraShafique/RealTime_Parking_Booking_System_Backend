@@ -8,4 +8,4 @@ const userRouter = express.Router();
 
 userRouter.route('/registeration').post(userValidator, userRegistrationController);
 
-export default userRouter;
+export default userRouter; 

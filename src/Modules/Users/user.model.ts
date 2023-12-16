@@ -37,7 +37,7 @@ UserSchema.pre<IUser>('save', function (next) {
     next();
   });
 
-// UserSchema.plugin(uniqueValidator);
+// UserSchema.plugin(uniqueValidator); 
 // UserSchema.plugin(softDeletePlugin);
 
 const UserRegistrationModel = mongoose.model<IUser>(

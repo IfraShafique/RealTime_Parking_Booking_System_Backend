@@ -61,4 +61,10 @@ slotBookingSchema.pre<ISlotBooking>('save', function (next) {
 
 const slotBookingModel = mongoose.model<ISlotBooking>('slotBooking', slotBookingSchema);
 
+const changeStream = slotBookingModel.watch();
+
+changeStream.on('change', (change)=> {
+  console.log('user change detected:', change);
+});
+
 export {slotBookingModel};
