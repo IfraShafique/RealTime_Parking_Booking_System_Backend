@@ -9,11 +9,11 @@ export const login = async (
   res: Response,
   next: NextFunction
 ) => {
-  const email = req.body.email;
+  const email = req.body.email; 
   const password = req.body.password;
 
   try {
-    
+     
     const user = await UserRegistrationModel.findOne({ email });
 
     if (!user) {
@@ -21,7 +21,7 @@ export const login = async (
       (error as any).statusCode = 403;
       return next(error);
     }
-
+ 
     let token;
 
     if (user.password) {
@@ -54,7 +54,7 @@ export const logout = async(
   res.clearCookie("jwt");
 
   res.status(200).json({message: "User logout successfully"})
-}
+} 
 
 // export const login = async (
 //   req: Request,

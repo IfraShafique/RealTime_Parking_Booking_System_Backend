@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction} from "express";
-import { slotBookingModel } from "../SlotBooking/slot.model";
+import { slotBookingModel } from "./slot.model";
 
 export const isSlotAvailable = async (
     req: Request,

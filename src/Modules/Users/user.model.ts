@@ -12,6 +12,7 @@ export interface IUser extends Document {
     password?: string;
     role: string;
     parkingArea: string[];
+    slotBooking: string[];
 }
 
 const UserSchema: Schema = new Schema({
@@ -24,8 +25,12 @@ const UserSchema: Schema = new Schema({
     parkingArea: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'parkingArea', 
-      
     }],
+    slotBooking: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref:'slotBooking',
+      default: null,
+  }]
 })
 
 UserSchema.pre<IUser>('save', function (next) {

@@ -14,8 +14,11 @@ export const userRegistrationController = async (
           const user = {
           ...req.body,
           parkingArea: req.body.parkingArea,
+          slotBooking: req.body.slotBooking,
         };
         await userRegistrationService(user, res);
+        
+        
         
       } else {
         const error = new Error('User Already Exist');

@@ -6,7 +6,7 @@ import {dbConnect} from './db/db.config';
 import userRoutes from '../Modules/Users/user.routes';
 import loginRoutes from '../Modules/Authentication/auth.routes';
 import parkingAreaRoutes from '../Modules/ParkingBooking/booking.routes';
-import cookieParser from 'cookie-parser';
+import slotBookingRoutes from '../Modules/SlotBooking/slot.routes';
 import bodyParser from 'body-parser';
 
 dotenv.config();
@@ -36,5 +36,6 @@ app.use(bodyParser.json());
 app.use(userRoutes)   
 app.use(loginRoutes);
 app.use(parkingAreaRoutes);
+app.use(slotBookingRoutes);
 
 export default app;

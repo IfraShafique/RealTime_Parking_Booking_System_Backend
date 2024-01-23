@@ -6,6 +6,6 @@ import { userValidator } from './user.middleware';
 
 const userRouter = express.Router();
 
-userRouter.route('/registeration').post(userValidator, userRegistrationController);
+userRouter.route('/registration').post(userValidator, userRegistrationController);
 
 export default userRouter; 

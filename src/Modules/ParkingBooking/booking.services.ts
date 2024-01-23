@@ -1,16 +1,21 @@
-// parking.services.ts
-import { IParkingBooking, parkingBookingModel, ISlotBooking, slotBookingModel } from "./booking.model";
+import { IParkingBooking, parkingBookingModel } from "./booking.model";
 import { Response } from "express";
 
 export const parkingBookingServices = async (
-  image: string
+  image: string,
+  userId: string,
+  slotBookingId?: string | null
 ): Promise<IParkingBooking> => {
   try {
-    const parkingArea = new parkingBookingModel({ image, slots: [] });
+    const parkingArea = new parkingBookingModel({
+      image,
+      users: userId,
+      slotBooking: slotBookingId ,
+    });
     const newArea = await parkingArea.save();
     return newArea;
   } catch (error: unknown) {
-    throw (error);
+    throw error;
   }
 };
 
@@ -18,10 +23,11 @@ export const parkingBookingServices = async (
 export const updateUserParkingArea = async (
   userId: string,
   slotBookingId: string,
+  req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    const user = await parkingBookingModel.findById(userId);
+    const user = await parkingBookingModel.findById(userId).exec();
 
     if (!user) {
       const error = new Error('User not found');
@@ -29,8 +35,14 @@ export const updateUserParkingArea = async (
       throw error;
     }
 
-    user.slotBooking.push(slotBookingId);
-    await user.save();
+    if (user.slotBooking) {
+      (user.slotBooking as any).push(slotBookingId);
+      await user.save();
+    } else {
+        const error = new Error('User not found');
+        (error as any).statusCode = 404;
+        throw error;
+    }
 
     res.status(200).json({ message: 'Parking Area updated successfully' });
   } catch (error: unknown) {
@@ -39,22 +51,3 @@ export const updateUserParkingArea = async (
   }
 };
 
-// Slot booking services
-export const slotBookingServices = async (
-  slot: ISlotBooking
-): Promise<ISlotBooking> => {
-  try {
-    const newSlot = new slotBookingModel(slot);
-    const savedSlot = await newSlot.save();
-
-    // If parkingAreaId is provided, update the slot with the parkingArea reference
-    if (slot.parkingAreaId) {
-      savedSlot.parkingAreaId = slot.parkingAreaId;
-      await savedSlot.save();
-    }
-
-    return savedSlot;
-  } catch (error: unknown) {
-    throw (error);
-  }
-};

@@ -32,6 +32,7 @@ export const userRegistrationService = async (
     const newUser = new UserRegistrationModel({
       ...data,
       parkingArea: [],
+      slotBooking: [],
     });
 
     const result = await newUser.save();
@@ -55,6 +56,7 @@ export const userRegistrationService = async (
 export const updateUserParkingArea = async (
   userId: string,
   parkingAreaId: string,
+  slotBookingId: string,
   res: Response,
 ): Promise<void> => {
   try {
@@ -66,7 +68,9 @@ export const updateUserParkingArea = async (
       throw error;
     }
 
+    // Update parkingArea and slotBooking separately
     user.parkingArea.push(parkingAreaId);
+    user.slotBooking.push(slotBookingId);
     await user.save();
 
     res.status(200).json({ message: 'Parking Area updated successfully' });
