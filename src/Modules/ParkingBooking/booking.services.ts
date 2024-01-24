@@ -1,16 +1,18 @@
 import { IParkingBooking, parkingBookingModel } from "./booking.model";
-import { Response } from "express";
+import { Response, Request } from "express";
+import { IUser } from "../Users/user.model";
 
 export const parkingBookingServices = async (
   image: string,
   userId: string,
+  req: Request,
   slotBookingId?: string | null
 ): Promise<IParkingBooking> => {
   try {
     const parkingArea = new parkingBookingModel({
       image,
       users: userId,
-      slotBooking: slotBookingId ,
+      slotBooking: slotBookingId,
     });
     const newArea = await parkingArea.save();
     return newArea;
@@ -27,7 +29,7 @@ export const updateUserParkingArea = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const user = await parkingBookingModel.findById(userId).exec();
+    const user = await parkingBookingModel.findById(userId) ;
 
     if (!user) {
       const error = new Error('User not found');
@@ -35,14 +37,7 @@ export const updateUserParkingArea = async (
       throw error;
     }
 
-    if (user.slotBooking) {
-      (user.slotBooking as any).push(slotBookingId);
-      await user.save();
-    } else {
-        const error = new Error('User not found');
-        (error as any).statusCode = 404;
-        throw error;
-    }
+    await user.save();
 
     res.status(200).json({ message: 'Parking Area updated successfully' });
   } catch (error: unknown) {

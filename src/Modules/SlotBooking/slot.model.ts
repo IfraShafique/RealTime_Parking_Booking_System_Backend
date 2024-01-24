@@ -4,12 +4,13 @@ export interface ISlotBooking extends Document{
     _id?: ObjectId,
     date: Date,
     selectedDate: String,
-    selectedTime: String,
-    duration: String,
+    selectedTime: Date,
+    duration: string,
     slotImage: String,
     booked: boolean,
     slot: String;
     bookUser: ObjectId | null;
+    selectedImage: String;
 }
 
 export const slotBookingSchema: Schema = new Schema({
@@ -19,7 +20,9 @@ export const slotBookingSchema: Schema = new Schema({
     duration: {type: String,  required: true,},
     slotImage: {type: String,  required: true,},
     booked: {type: Boolean, default: true, required: true,},
+    selectedImage: {type: String, required: true,},
     bookUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+    
 })
 
 slotBookingSchema.pre<ISlotBooking>('save', function (next) {

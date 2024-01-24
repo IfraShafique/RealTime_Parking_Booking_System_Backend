@@ -1,71 +1,120 @@
-import { slotBookingServices } from "./slot.services";
-import { ISlotBooking } from "./slot.model";
-import { NextFunction, Response, Request } from "express";
+import { slotBookingServices, isSlotAvailableService, getBookingsByIdServices } from "./slot.services";
+import { NextFunction, Response, Request, response } from "express";
 import { UserRegistrationModel } from "../Users/user.model";
-import { parkingBookingModel } from "../ParkingBooking/booking.model";
-import mongoose from "mongoose";
+import nodemailer from "nodemailer";
+import { USER,PASS } from "../../Constant";
 
-// Slot Booking Controller
+// create a node mailer transporter
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: USER,
+    pass: PASS
+  }
+})
+// forward-email=ifrashafique123@gmail.com
 export const slotBookingController = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
-    try {
-      const userId = req.params.id;
-      const { selectedDate, selectedTime, duration, slotImage, parkingAreaId } = req.body;
-      // const parkingAreaId = req.body.parkingAreaId;
-      const bookUser = await UserRegistrationModel.findById(userId);
-  
-      if (!bookUser) {
-        const error = new Error("User not found");
-        (error as any).statusCode = 404;
-        return next(error);
-      }
-  
-      const slotBooking = {
-          ...req.body,
-          bookUser: userId,
-        };
-        // delete slotBooking['bookUser']
-  
-      const savedParking = await slotBookingServices(slotBooking, res);
-      console.log(savedParking);
-  
-      if (!savedParking || !savedParking._id) {
-        // Handle the case where savedBooking is undefined or _id is undefined
-        const error = new Error("Failed to save parking booking");
-        (error as any).statusCode = 500;
-        return next(error);
-      } 
-  
-      // Push the slot booking id to the user database
-      bookUser.slotBooking.push(savedParking._id.toString());
-      await bookUser?.save();
-      console.log('Request Object:', req);
-console.log('User ID:', userId);
-console.log('Parking Area ID:', parkingAreaId);
-      
-      
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = req.body.userId;
+    // find the user id from the request body
+    const bookUser = await UserRegistrationModel.findById(userId);
 
-      const parkingArea = await parkingBookingModel.findById(parkingAreaId);
-      console.log("Parking Area Id: ",parkingArea)
-      if (!parkingArea) {
-        const error = new Error("Parking area not found");
-        (error as any).statusCode = 404;
-        return next(error);
-      }
-  
-       // Check if slotBooking is not null before assigning its value
-      if (parkingArea.slotBooking !== null) {
-        parkingArea.slotBooking = savedParking._id;
-        await parkingArea.save();
-      }
-  
-      
-      res.status(201).json(savedParking);
-    } catch (error: unknown) {
+    const {selectedDate, selectedTime, duration, selectedImage, slotImage} = req.body;
+
+    // check if the slot available or not
+    const isSlotAvailable = await isSlotAvailableService( selectedDate, selectedTime, selectedImage, duration,
+      slotImage,);
+
+    if(!isSlotAvailable){
+      const error = new Error("Slot is already booked.");
+      (error as any).statusCode = 404;
+      throw error;
+    }
+
+    if (!bookUser) {
+      const error = new Error("User not found");
+      (error as any).statusCode = 404;
+      return next(error);
+    }
+
+    const slotBooking = {
+      ...req.body,
+      bookUser: userId,
+      selectedImage: selectedImage,
+    };
+    // delete slotBooking['bookUser']
+
+    // saved the data in the database
+    const savedParking = await slotBookingServices(slotBooking, res);
+    console.log(savedParking);
+
+    if (!savedParking || !savedParking._id) {
+      // Handle the case where savedBooking is undefined or _id is undefined
+      const error = new Error("Failed to save parking booking");
+      (error as any).statusCode = 500;
+      return next(error);
+    }
+    
+    // fetch the users email
+    const userEmail = bookUser.email;
+    // call the email function
+    await sendBookingConfirmationEmail(userEmail);
+
+    // Push the slot booking id to the user database
+    bookUser.slotBooking.push(savedParking._id.toString());
+    await bookUser?.save();
+
+    res.status(201).json(savedParking);
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === 'Slot is already booked') {
+      res.status(400).json({ message: 'Slot is already booked' });
+    } else {
       next(error);
     }
+  }
+};
+
+// Function to send confirmation email
+const sendBookingConfirmationEmail = async (toEmail: string) => {
+  const mailOptions = {
+    from: 'ifrashafique234@gmail.com',
+    to: toEmail,
+    subject: 'Parking Booking Confirmation',
+    text: "Your parking booking has been confirmed. Thank you for using our services"
   };
+  await transporter.sendMail(mailOptions);
+}
   
+// get booking details by user id
+export const getSlotBookingByIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+):Promise<void> => {
+
+  try{
+    const userId = req.params.userId;
+
+    if(!userId){
+      res.status(400).json({message: "User Id required"})
+      return;
+    }
+
+    const bookings = await getBookingsByIdServices(userId);
+
+    if(!bookings){
+      res.status(404).json({message: "No bookings found"})
+      return;
+    }
+
+    res.json(bookings);
+  }
+  catch(error){
+    throw error;
+  }
+}
+

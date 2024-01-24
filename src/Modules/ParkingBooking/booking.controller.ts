@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { parkingBookingServices} from './booking.services';
 import { UserRegistrationModel,  } from '../Users/user.model';
-import { IParkingBooking, parkingBookingModel } from './booking.model';
+
 
 export const parkingBookingController = async (
   req: Request,
@@ -18,7 +18,6 @@ export const parkingBookingController = async (
       return next(error);
     }
 
-    // Extracting the image and slotBooking properties explicitly
     const { image, slotBooking } = req.body;
 
     // Call parkingBookingServices with the required arguments
@@ -30,14 +29,6 @@ export const parkingBookingController = async (
       return next(error);
     }
 
-    // push the parking booking id to the user's parkingArea array
-    // push the parking booking id to the user's parkingArea array
-    // user.parkingArea.push(savedBooking._id.toString());
-    
-    // // Push the slot booking id to the user's slotBooking array
-    // user.slotBooking.push(savedBooking._id.toString());
-
-    // Push the parking booking id to the user's parkingArea array
     user.parkingArea.push(savedBooking._id.toString());
 
     // Only push the slot booking id to the user's slotBooking array if slotBooking is provided

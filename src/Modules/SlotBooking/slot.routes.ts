@@ -1,8 +1,9 @@
 import express from "express";
-import { slotBookingController } from "./slot.controller";
+import { getSlotBookingByIdController, slotBookingController } from "./slot.controller";
 
 const slotBookingRouter = express.Router();
 
-slotBookingRouter.post('/slotBooking/:id', slotBookingController)
+slotBookingRouter.post('/slotBooking', slotBookingController);
+slotBookingRouter.get('get/slotBooking/:id', getSlotBookingByIdController)
 
 export default slotBookingRouter;
