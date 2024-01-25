@@ -97,13 +97,45 @@ export const slotBookingServices = async (
     }
   };
 
+  // get request for fetching bookinng data by user id
   export const getBookingsByIdServices = async (userId: string) => {
     try {
-      const bookings = await UserRegistrationModel.findById(userId).populate('slotBooking');
+      const bookings = await UserRegistrationModel.findById(userId).populate("slotBooking");
+      console.log(bookings)
       return bookings;
     } catch (error) {
       throw error;
     }
   };
+
+  // get request for fecthing all user bookings
+  export const getBookingsServices = async () => {
+    try {
+      const allBookings = await slotBookingModel.find().populate({path:'bookUser'});
+      return allBookings;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // cancellation functionality
+    export const cancelBookingByIdServices = async(bookingId: string) => {
+      try {
+        const deleteBooking = await slotBookingModel.findByIdAndDelete(bookingId).lean();
+        // const deleteBooking = await UserRegistrationModel.findByIdAndDelete(bookingId).populate({path: 'slotBooking'});
+        
+        // alse remove reference fromm user registration model
+        await UserRegistrationModel.updateOne(
+          { _id: deleteBooking.bookUser },
+          { $pull: { slotBooking: bookingId } }
+        );
+    
+        return deleteBooking;
+
+      } catch (error) {
+          throw error;
+      } 
+    }
+
 
   

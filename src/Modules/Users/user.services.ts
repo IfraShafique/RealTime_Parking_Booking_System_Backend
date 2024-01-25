@@ -6,6 +6,7 @@ import { ResponsePacket } from '../../Utils';
 import { BCRYPT_SALT } from '../../Constant';
 import bcrypt from 'bcrypt';
 import { parkingBookingModel } from '../ParkingBooking/booking.model';
+import { slotBookingModel } from '../SlotBooking/slot.model';
 
 export const isEmailExistService = async (
   email: any,
@@ -79,3 +80,13 @@ export const updateUserParkingArea = async (
     res.status(500).json({ error: (error as Error).message });
   }
 };
+
+// get the user details
+export const userDetailsServices = async() => {
+  try {
+    const users = await UserRegistrationModel.find({role: 'user'});
+    return users;
+  } catch (error) {
+    throw error;
+  }
+}

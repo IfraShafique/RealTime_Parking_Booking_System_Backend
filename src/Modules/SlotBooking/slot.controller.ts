@@ -1,8 +1,9 @@
-import { slotBookingServices, isSlotAvailableService, getBookingsByIdServices } from "./slot.services";
+import { slotBookingServices, isSlotAvailableService, getBookingsByIdServices, getBookingsServices, cancelBookingByIdServices } from "./slot.services";
 import { NextFunction, Response, Request, response } from "express";
 import { UserRegistrationModel } from "../Users/user.model";
 import nodemailer from "nodemailer";
 import { USER,PASS } from "../../Constant";
+import { rmSync } from "fs";
 
 // create a node mailer transporter
 const transporter = nodemailer.createTransport({
@@ -81,7 +82,7 @@ export const slotBookingController = async (
 // Function to send confirmation email
 const sendBookingConfirmationEmail = async (toEmail: string) => {
   const mailOptions = {
-    from: 'ifrashafique234@gmail.com',
+    from: 'parkease001@gmail.com',
     to: toEmail,
     subject: 'Parking Booking Confirmation',
     text: "Your parking booking has been confirmed. Thank you for using our services"
@@ -97,24 +98,60 @@ export const getSlotBookingByIdController = async (
 ):Promise<void> => {
 
   try{
+    
     const userId = req.params.userId;
-
-    if(!userId){
-      res.status(400).json({message: "User Id required"})
-      return;
-    }
-
+    console.log(userId)
     const bookings = await getBookingsByIdServices(userId);
 
-    if(!bookings){
-      res.status(404).json({message: "No bookings found"})
+    if (!bookings) {
+      res.status(404).json({ message: 'No bookings found' });
       return;
     }
 
-    res.json(bookings);
+    res.status(200).json(bookings);
   }
   catch(error){
     throw error;
   }
 }
 
+// fetch all bookings
+export const getAllBookingsController = async(
+  req: Request,
+  res: Response,
+):Promise<void> => {
+  try {
+    const allBookings = await getBookingsServices()
+    if(!allBookings){
+      res.status(404).json({message: "No bookings Found"})
+    }
+    res.status(200).json(allBookings);
+  } catch (error) {
+    res.status(500).json({error: (error as any).message})
+  }
+}
+
+// delete bookings by id
+export const cancelBookingController = async(
+  req: Request,
+  res: Response
+): Promise <void> => {
+
+  try {
+    const bookingId = req.params.bookingId;
+    // const bookingId = "65b18a532f5d4068a3814ac8"
+    console.log(bookingId)
+    const deleteBooking = await cancelBookingByIdServices(bookingId);
+    // console.log(deleteBooking)
+    if (!deleteBooking) {
+      res.status(404).json({ message: "No Bookings Found" });
+    } else {
+      res.status(200).json(deleteBooking);
+    }
+
+
+  } catch (error) {
+    res.status(500).json({error: (error as any).message})
+  }
+} 
+ 
