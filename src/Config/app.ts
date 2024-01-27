@@ -17,7 +17,7 @@ const app = express();
 dbConnect();
 
 var corsOptions ={
-    origin:'http://localhost:3000', 
+    origin:'http://real-time-parking-booking-system.vercel.app', 
     credentials:true,            //access-control-allow-credentials:true
     method: ["GET","POST","DELETE"],
   }
