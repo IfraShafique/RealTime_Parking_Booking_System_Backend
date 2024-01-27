@@ -90,3 +90,34 @@ export const userDetailsServices = async() => {
     throw error;
   }
 }
+
+// edit email
+export const editEmailServices = async (
+  userId: string,
+  newEmail: string,
+): Promise<void> => {
+  try {
+    
+    const user = await UserRegistrationModel.findByIdAndUpdate(userId,
+      {email: newEmail},
+      {new: true});
+
+      if(!user){
+        throw new Error('User not found')
+      }
+
+  } catch (error: unknown) {
+    throw error;
+  }
+};
+
+// get the admin details
+export const adminDetailsServices = async() => {
+  try {
+    const users = await UserRegistrationModel.find({role: 'admin'});
+    return users;
+  } catch (error) {
+    throw error;
+  }
+}
+
