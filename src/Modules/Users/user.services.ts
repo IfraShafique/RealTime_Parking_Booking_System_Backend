@@ -95,17 +95,23 @@ export const userDetailsServices = async() => {
 export const editEmailServices = async (
   userId: string,
   newEmail: string,
+  editName: string,
+  newContact: string
 ): Promise<void> => {
   try {
-    
-    const user = await UserRegistrationModel.findByIdAndUpdate(userId,
-      {email: newEmail},
-      {new: true});
+    const user = await UserRegistrationModel.findByIdAndUpdate(
+      userId,
+      {
+        email: newEmail,
+        name: editName,
+        contact: newContact,
+      },
+      { new: true }
+    );
 
-      if(!user){
-        throw new Error('User not found')
-      }
-
+    if (!user) {
+      throw new Error("User not found");
+    }
   } catch (error: unknown) {
     throw error;
   }
@@ -120,4 +126,23 @@ export const adminDetailsServices = async() => {
     throw error;
   }
 }
+
+// change password 
+
+export const changePasswordService = async (
+  userId: string,
+  hashedPassword: string
+): Promise<IUser | null> => {
+  try {
+    const changePassword = await UserRegistrationModel.findByIdAndUpdate(
+      userId,
+      { password: hashedPassword },
+      { new: true }
+    );
+
+    return changePassword;
+  } catch (error) {
+    throw error;
+  }
+};
 

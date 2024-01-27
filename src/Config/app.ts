@@ -8,6 +8,7 @@ import loginRoutes from '../Modules/Authentication/auth.routes';
 import parkingAreaRoutes from '../Modules/ParkingBooking/booking.routes';
 import slotBookingRoutes from '../Modules/SlotBooking/slot.routes';
 import bodyParser from 'body-parser';
+import contactUsRoutes from '../Modules/ContactUs/contactUs.routes';
 
 dotenv.config();
 const app = express();
@@ -37,5 +38,6 @@ app.use(userRoutes)
 app.use(loginRoutes);
 app.use(parkingAreaRoutes);
 app.use(slotBookingRoutes);
+app.use(contactUsRoutes)
 
 export default app;
