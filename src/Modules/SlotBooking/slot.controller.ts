@@ -45,7 +45,7 @@ export const slotBookingController = async (
     const slotBooking = {
       ...req.body,
       bookUser: userId,
-      selectedImage: selectedImage.req.body,
+      selectedImage: req.body.selectedImage,
     };
     // delete slotBooking['bookUser']
 
