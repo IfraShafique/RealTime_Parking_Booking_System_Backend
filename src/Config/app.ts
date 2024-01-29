@@ -24,7 +24,8 @@ dbConnect();
 
 var corsOptions = {
     origin: function (origin, callback) {
-        if (origin === 'http://real-time-parking-booking-system.vercel.app') {
+        const allowedOrigins = ['https://real-time-parking-booking-system.vercel.app'];
+        if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
@@ -33,6 +34,7 @@ var corsOptions = {
     credentials: true,
     methods: ["GET", "POST", "DELETE"],
 }
+
 
 
 app.use(helmet());
