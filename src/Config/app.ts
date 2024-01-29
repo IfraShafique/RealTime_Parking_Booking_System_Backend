@@ -16,11 +16,24 @@ const app = express();
 // database connection function call here
 dbConnect();
 
-var corsOptions ={
-    origin:'http://real-time-parking-booking-system.vercel.app', 
-    credentials:true,            //access-control-allow-credentials:true
-    method: ["GET","POST","DELETE"],
-  }
+// var corsOptions ={
+//     origin:'http://real-time-parking-booking-system.vercel.app', 
+//     credentials:true,            //access-control-allow-credentials:true
+//     method: ["GET","POST","DELETE"],
+//   }
+
+var corsOptions = {
+    origin: function (origin, callback) {
+        if (origin === 'http://real-time-parking-booking-system.vercel.app') {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "DELETE"],
+}
+
 
 app.use(helmet());
 app.use(cors(corsOptions));
