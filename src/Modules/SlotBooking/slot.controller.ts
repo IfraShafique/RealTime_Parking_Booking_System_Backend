@@ -24,17 +24,17 @@ export const slotBookingController = async (
     // find the user id from the request body
     const bookUser = await UserRegistrationModel.findById(userId);
 
-    const {selectedDate, selectedTime, duration, selectedImage, slotImage} = req.body;
+    // const {selectedDate, selectedTime, duration, selectedImage, slotImage} = req.body;
 
-    // check if the slot available or not
-    const isSlotAvailable = await isSlotAvailableService( selectedDate, selectedTime, selectedImage, duration,
-      slotImage,);
+    // // check if the slot available or not
+    // const isSlotAvailable = await isSlotAvailableService( selectedDate, selectedTime, selectedImage, duration,
+    //   slotImage,);
 
-    if(!isSlotAvailable){
-      const error = new Error("Slot is already booked.");
-      (error as any).statusCode = 404;
-      throw error;
-    }
+    // if(!isSlotAvailable){
+    //   const error = new Error("Slot is already booked.");
+    //   (error as any).statusCode = 404;
+    //   throw error;
+    // }
 
     if (!bookUser) {
       const error = new Error("User not found");
@@ -45,7 +45,7 @@ export const slotBookingController = async (
     const slotBooking = {
       ...req.body,
       bookUser: userId,
-      selectedImage: selectedImage,
+      selectedImage: selectedImage.req.body,
     };
     // delete slotBooking['bookUser']
 
